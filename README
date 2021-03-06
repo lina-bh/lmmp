@@ -1,0 +1,11 @@
+Lina's Magical Music Player
+
+Warning: either you like the layout, or you should fork!
+
+goals:
+* target Windows, and Wayland on Linux
+* integrated last.fm scrobbling and Discord rich presence
+* replaygain, including for opus
+* MPRIS d-bus controls
+* oooh since we use GL for rendering, maybe we should add some sick
+  visualisations
