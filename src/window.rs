@@ -1,11 +1,5 @@
-use glutin::window::WindowBuilder;
-use glutin::{Api, ContextBuilder, GlProfile, GlRequest, PossiblyCurrent, WindowedContext};
-use imgui::{im_str, Condition, Context, StyleVar, Window};
-use imgui_opengl_renderer::Renderer;
-use imgui_winit_support::{HiDpiMode, WinitPlatform};
+use glutin::PossiblyCurrent;
 use std::cell::Cell;
-use std::env;
-use std::time::Instant;
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop, EventLoopWindowTarget};
 
@@ -13,14 +7,19 @@ use crate::gl;
 
 pub struct LmmpWindow {
     event_loop: Cell<Option<EventLoop<()>>>, // *sigh*
-    gl_ctx: WindowedContext<PossiblyCurrent>,
+    gl_ctx: glutin::WindowedContext<PossiblyCurrent>,
     imgui: imgui::Context,
-    backend: WinitPlatform,
+    backend: imgui_winit_support::WinitPlatform,
     renderer: imgui_opengl_renderer::Renderer,
 }
 
 impl LmmpWindow {
     pub fn new() -> LmmpWindow {
+        use glutin::window::WindowBuilder;
+        use glutin::{Api, ContextBuilder, GlProfile, GlRequest};
+        use imgui_opengl_renderer::Renderer;
+        use imgui_winit_support::{HiDpiMode, WinitPlatform};
+
         let wb = WindowBuilder::new()
             .with_visible(true)
             .with_resizable(true)
@@ -34,13 +33,13 @@ impl LmmpWindow {
             .unwrap();
         let gl_ctx = unsafe { gl_ctx.make_current().unwrap() };
 
-        let mut imgui = Context::create();
+        let mut imgui = imgui::Context::create();
         imgui.set_ini_filename(None);
 
         /* since winit won't do it's own decorations and let's be honest,
         why should we? there should probably be something here that
         detects gnome and then forces x11 (unfortunately ): */
-        let dpi_mode = match env::var("WAYLAND_DISPLAY") {
+        let dpi_mode = match std::env::var("WAYLAND_DISPLAY") {
             Ok(w) => {
                 if !w.is_empty() {
                     HiDpiMode::Default
@@ -71,7 +70,7 @@ impl LmmpWindow {
         targ: &EventLoopWindowTarget<()>,
         flow: &mut ControlFlow,
     ) {
-        use winit::event::WindowEvent::*;
+        use WindowEvent::*;
         match wev {
             // the config pragma means that removing the brackets here is not syntactically equivalent
             #[rustfmt::skip]
@@ -100,6 +99,8 @@ impl LmmpWindow {
     }
 
     fn draw(&mut self) {
+        use imgui::{im_str, Condition, StyleVar, Window};
+
         let window = self.gl_ctx.window();
         self.backend
             .prepare_frame(self.imgui.io_mut(), window)
@@ -187,11 +188,13 @@ impl LmmpWindow {
     }
 
     pub fn run(mut self) -> ! {
+        use std::time::Instant;
         // to avoid a partial move, we move the event loop out of the struct. silly, but it works
         let event_loop = self.event_loop.replace(None).unwrap();
         let mut last_frame = Instant::now();
         event_loop.run(move |ev, targ, flow| {
-            use winit::event::Event::*;
+            use Event::*;
+
             *flow = ControlFlow::Wait;
             match ev {
                 NewEvents(_) => {
