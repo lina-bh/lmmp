@@ -108,7 +108,7 @@ impl LmmpWindow {
         let ui = self.imgui.frame();
         let size = window.inner_size();
 
-        let toolbar_sz = {
+        let [_, bar_height] = {
             let window_padding = ui.push_style_var(StyleVar::WindowPadding([2f32, 2f32]));
             let frame_padding = ui.push_style_var(StyleVar::FramePadding([0f32, 0f32]));
             let min_size = ui.push_style_var(StyleVar::WindowMinSize([size.width as f32, 0f32]));
@@ -138,11 +138,8 @@ impl LmmpWindow {
             let min_size = ui.push_style_var(StyleVar::WindowMinSize([size.width as f32, 0f32]));
 
             let statusbar = Window::new(im_str!("statusbar"))
-                .position(
-                    [0f32, (size.height as f32) - toolbar_sz[1]],
-                    Condition::Always,
-                )
-                .size([size.width as f32, toolbar_sz[1]], Condition::Always)
+                .position([0f32, (size.height as f32) - bar_height], Condition::Always)
+                .size([size.width as f32, bar_height], Condition::Always)
                 .no_decoration()
                 .begin(&ui)
                 .unwrap();
@@ -155,11 +152,11 @@ impl LmmpWindow {
             min_size.pop(&ui);
         }
 
-        let inner_height = size.height as f32 - 2f32 * toolbar_sz[1];
+        let inner_height = size.height as f32 - 2f32 * bar_height;
         let half = inner_height / 2f32;
 
         Window::new(im_str!("art"))
-            .position([0f32, toolbar_sz[1]], Condition::Always)
+            .position([0f32, bar_height], Condition::Always)
             .size([half, half], Condition::Always)
             .no_decoration()
             .build(&ui, || {
@@ -167,13 +164,13 @@ impl LmmpWindow {
             });
 
         Window::new(im_str!("library"))
-            .position([half, toolbar_sz[1]], Condition::Always)
+            .position([half, bar_height], Condition::Always)
             .size([size.width as f32 - half, half], Condition::Always)
             .no_decoration()
             .build(&ui, || ui.text("library"));
 
         Window::new(im_str!("playlist"))
-            .position([0f32, toolbar_sz[1] + half], Condition::Always)
+            .position([0f32, bar_height + half], Condition::Always)
             .size([size.width as f32, half], Condition::Always)
             .no_decoration()
             .build(&ui, || ui.text("playlist"));
