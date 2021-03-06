@@ -1,4 +1,5 @@
 mod gl;
+mod widgets;
 mod window;
 
 use window::LmmpWindow;

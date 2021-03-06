@@ -5,6 +5,7 @@ use winit::event::{Event, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop, EventLoopWindowTarget};
 
 use crate::gl;
+use crate::widgets;
 
 pub struct LmmpWindow {
     event_loop: Cell<Option<EventLoop<()>>>, // *sigh*
@@ -107,27 +108,8 @@ impl LmmpWindow {
         let ui = self.imgui.frame();
         let size = window.inner_size();
 
-        let bar_height = self.toolbar(&ui, size.width);
-
-        {
-            let window_padding = ui.push_style_var(StyleVar::WindowPadding([2f32, 2f32]));
-            let frame_padding = ui.push_style_var(StyleVar::FramePadding([0f32, 0f32]));
-            let min_size = ui.push_style_var(StyleVar::WindowMinSize([size.width as f32, 0f32]));
-
-            let statusbar = Window::new(im_str!("statusbar"))
-                .position([0f32, (size.height as f32) - bar_height], Condition::Always)
-                .size([size.width as f32, bar_height], Condition::Always)
-                .no_decoration()
-                .begin(&ui)
-                .unwrap();
-            ui.text("statusbar");
-
-            statusbar.end(&ui);
-
-            window_padding.pop(&ui);
-            frame_padding.pop(&ui);
-            min_size.pop(&ui);
-        }
+        let bar_height = widgets::toolbar(&ui, size);
+        widgets::statusbar(&ui, size, bar_height);
 
         let inner_height = size.height as f32 - 2f32 * bar_height;
         let half = inner_height / 2f32;
@@ -159,30 +141,6 @@ impl LmmpWindow {
         }
         self.renderer.render(ui);
         self.gl_ctx.swap_buffers().unwrap();
-    }
-
-    fn toolbar(&self, ui: &Ui, width: u32) -> f32 {
-        let window_padding = ui.push_style_var(StyleVar::WindowPadding([2f32, 2f32]));
-        let frame_padding = ui.push_style_var(StyleVar::FramePadding([0f32, 0f32]));
-        let min_size = ui.push_style_var(StyleVar::WindowMinSize([width as f32, 0f32]));
-
-        let toolbar = Window::new(im_str!("toolbar"))
-            .position([0f32, 0f32], Condition::Always)
-            .size([width as f32, 0f32], Condition::Always)
-            .no_decoration()
-            .begin(&ui)
-            .unwrap();
-        ui.text("lmmp");
-        ui.same_line(0f32);
-        ui.button(im_str!("play"), [0f32, 0f32]);
-        let sz = ui.window_size();
-        toolbar.end(&ui);
-
-        window_padding.pop(&ui);
-        frame_padding.pop(&ui);
-        min_size.pop(&ui);
-
-        sz[1]
     }
 
     pub fn run(mut self) -> ! {
