@@ -1,4 +1,5 @@
 use glutin::PossiblyCurrent;
+use imgui::{im_str, Condition, StyleVar, Ui, Window};
 use std::cell::Cell;
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop, EventLoopWindowTarget};
@@ -98,9 +99,7 @@ impl LmmpWindow {
         }
     }
 
-    fn draw(&mut self) {
-        use imgui::{im_str, Condition, StyleVar, Window};
-
+    fn redraw(&mut self) {
         let window = self.gl_ctx.window();
         self.backend
             .prepare_frame(self.imgui.io_mut(), window)
@@ -108,29 +107,7 @@ impl LmmpWindow {
         let ui = self.imgui.frame();
         let size = window.inner_size();
 
-        let [_, bar_height] = {
-            let window_padding = ui.push_style_var(StyleVar::WindowPadding([2f32, 2f32]));
-            let frame_padding = ui.push_style_var(StyleVar::FramePadding([0f32, 0f32]));
-            let min_size = ui.push_style_var(StyleVar::WindowMinSize([size.width as f32, 0f32]));
-
-            let toolbar = Window::new(im_str!("toolbar"))
-                .position([0f32, 0f32], Condition::Always)
-                .size([size.width as f32, 0f32], Condition::Always)
-                .no_decoration()
-                .begin(&ui)
-                .unwrap();
-            ui.text("lmmp");
-            ui.same_line(0f32);
-            ui.button(im_str!("play"), [0f32, 0f32]);
-            let sz = ui.window_size();
-            toolbar.end(&ui);
-
-            window_padding.pop(&ui);
-            frame_padding.pop(&ui);
-            min_size.pop(&ui);
-
-            sz
-        };
+        let bar_height = self.toolbar(&ui, size.width);
 
         {
             let window_padding = ui.push_style_var(StyleVar::WindowPadding([2f32, 2f32]));
@@ -184,6 +161,30 @@ impl LmmpWindow {
         self.gl_ctx.swap_buffers().unwrap();
     }
 
+    fn toolbar(&self, ui: &Ui, width: u32) -> f32 {
+        let window_padding = ui.push_style_var(StyleVar::WindowPadding([2f32, 2f32]));
+        let frame_padding = ui.push_style_var(StyleVar::FramePadding([0f32, 0f32]));
+        let min_size = ui.push_style_var(StyleVar::WindowMinSize([width as f32, 0f32]));
+
+        let toolbar = Window::new(im_str!("toolbar"))
+            .position([0f32, 0f32], Condition::Always)
+            .size([width as f32, 0f32], Condition::Always)
+            .no_decoration()
+            .begin(&ui)
+            .unwrap();
+        ui.text("lmmp");
+        ui.same_line(0f32);
+        ui.button(im_str!("play"), [0f32, 0f32]);
+        let sz = ui.window_size();
+        toolbar.end(&ui);
+
+        window_padding.pop(&ui);
+        frame_padding.pop(&ui);
+        min_size.pop(&ui);
+
+        sz[1]
+    }
+
     pub fn run(mut self) -> ! {
         use std::time::Instant;
         // to avoid a partial move, we move the event loop out of the struct. silly, but it works
@@ -200,7 +201,7 @@ impl LmmpWindow {
                     last_frame = now;
                 }
                 RedrawRequested(_) => {
-                    self.draw();
+                    self.redraw();
                 }
                 WindowEvent { event: ref wev, .. } => {
                     self.handle_window_event(&wev, &targ, flow);
