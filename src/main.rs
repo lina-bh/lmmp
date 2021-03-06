@@ -1,11 +1,9 @@
-#[allow(unused_mut)]
-#[allow(bare_trait_objects)]
-mod gl {
-    include!(concat!(env!("OUT_DIR"), "/bindings.rs"));
-}
+mod gl;
 mod window;
 
+use window::LmmpWindow;
+
 fn main() {
-    let window = window::LmmpWindow::new();
+    let window = LmmpWindow::new();
     window.run();
 }
