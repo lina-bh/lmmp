@@ -1,0 +1,18 @@
+[package]
+name = "lmmp"
+version = "0.1.0"
+authors = ["Lina <4982999-flatulation@users.noreply.gitlab.com>"]
+edition = "2018"
+build = "build.rs"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[build-dependencies]
+gl_generator = "^0.5"
+
+[dependencies]
+imgui = "^0.7"
+imgui-winit-support = "^0.7"
+imgui-opengl-renderer = "0.11"
+glutin = "0.26"
+winit = "^0.24"

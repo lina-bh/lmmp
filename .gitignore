@@ -43,3 +43,8 @@ _deps
 *.out
 *.app
 build*/
+
+
+# Added by cargo
+
+/target
