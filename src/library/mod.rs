@@ -1,4 +1,5 @@
 mod mp3;
+pub mod opus;
 pub mod vorb;
 
 use std::error::Error;
@@ -21,6 +22,7 @@ impl Track {
         Ok(if let Some(ext) = p.extension().and_then(OsStr::to_str) {
             match ext {
                 "mp3" => mp3::parse(p)?,
+                "opus" => opus::parse(p)?,
                 _ => None,
             }
         } else {
