@@ -11,6 +11,8 @@ fn main() {
     let library_path = library_path.replace("~", &env::var("HOME").unwrap());
     let files = library::index(&library_path).unwrap();
 
+    library::vorb::_test();
+
     let window = LmmpWindow::new();
     window.run();
 }

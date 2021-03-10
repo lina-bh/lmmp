@@ -1,4 +1,5 @@
 mod mp3;
+pub mod vorb;
 
 use std::error::Error;
 use std::ffi::OsStr;
