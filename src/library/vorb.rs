@@ -10,6 +10,7 @@ pub fn parse(p: impl AsRef<Path>) -> Result<Option<Track>, Box<dyn Error>> {
     let p = p.as_ref();
     let f = File::open(p)?;
     let vf = OggStreamReader::new(f)?;
+    #[allow(clippy::redundant_clone)]
     let m = vf
         .comment_hdr
         .comment_list

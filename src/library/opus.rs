@@ -6,8 +6,8 @@ use std::path::Path;
 pub fn parse(p: impl AsRef<Path>) -> Result<Option<Track>, Box<dyn Error>> {
     let p = p.as_ref();
     let op = opus_headers::parse_from_path(p)?;
-    let tags = op.comments.user_comments;
-    Ok(parse_tags(tags.clone(), p))
+    #[allow(clippy::redundant_clone)]
+    Ok(parse_tags(op.comments.user_comments.clone(), p))
 }
 
 fn parse_tags(mut m: HashMap<String, String>, p: &Path) -> Option<Track> {
