@@ -1,10 +1,9 @@
 mod mp3;
-pub mod opus;
-pub mod vorb;
+mod opus;
+mod vorb;
 
 use std::error::Error;
 use std::ffi::OsStr;
-use std::fs::File;
 use std::path::{Path, PathBuf};
 use walkdir::WalkDir;
 
@@ -18,11 +17,13 @@ pub struct Track {
 }
 
 impl Track {
-    pub fn parse(p: PathBuf) -> Result<Option<Track>, Box<dyn Error>> {
+    pub fn parse(p: impl AsRef<Path>) -> Result<Option<Track>, Box<dyn Error>> {
+        let p = p.as_ref();
         Ok(if let Some(ext) = p.extension().and_then(OsStr::to_str) {
             match ext {
                 "mp3" => mp3::parse(p)?,
                 "opus" => opus::parse(p)?,
+                "ogg" => vorb::parse(p)?,
                 _ => None,
             }
         } else {
@@ -42,7 +43,7 @@ pub fn index<P: AsRef<Path>>(library_path: P) -> Result<Vec<Track>, Box<dyn Erro
     let mut tracks: Vec<Track> = Vec::new();
 
     for path in paths {
-        if let Some(track) = Track::parse(path)? {
+        if let Some(track) = Track::parse(&path)? {
             tracks.push(track);
         }
     }
