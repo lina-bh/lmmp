@@ -10,7 +10,7 @@ use window::LmmpWindow;
 fn set_ffmpeg_loglevel() {
     use ffmpeg::util::log;
 
-    log::set_level(log::Level::Warning);
+    log::set_level(log::Level::Error);
 }
 
 fn main() {
