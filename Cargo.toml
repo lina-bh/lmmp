@@ -7,15 +7,18 @@ build = "build.rs"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
+[features]
+ui = ["imgui", "imgui-winit-support", "imgui-opengl-renderer", "glutin", "winit"]
+
 [build-dependencies]
 gl_generator = "^0.5"
 
 [dependencies]
-imgui = "^0.7"
-imgui-winit-support = "^0.7"
-imgui-opengl-renderer = "^0.11"
-glutin = "^0.26"
-winit = "^0.24"
+imgui = { version = "^0.7", optional = true }
+imgui-winit-support = { version = "^0.7", optional = true }
+imgui-opengl-renderer = { version = "^0.11", optional = true }
+glutin = { version = "^0.26", optional = true }
+winit = { version = "^0.24", optional = true }
 walkdir = "^2.3"
 id3 = "^0.6"
 mp4ameta = "0.9.1"

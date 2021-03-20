@@ -1,11 +1,9 @@
-mod gl;
 mod library;
-// mod vorbfile;
+#[cfg(feature = "ui")]
 mod window;
 
 use ffmpeg_next as ffmpeg;
 use std::env;
-use window::LmmpWindow;
 
 fn set_ffmpeg_loglevel() {
     use ffmpeg::util::log;
@@ -27,6 +25,9 @@ fn main() {
 
     // library::vorb::_test();
 
-    let window = LmmpWindow::new();
-    window.run();
+    #[cfg(feature = "ui")]
+    {
+        let window = window::LmmpWindow::new();
+        window.run();
+    }
 }

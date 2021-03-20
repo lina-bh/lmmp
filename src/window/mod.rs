@@ -4,8 +4,7 @@ use std::cell::Cell;
 use winit::event::{Event, WindowEvent};
 use winit::event_loop::{ControlFlow, EventLoop, EventLoopWindowTarget};
 
-use super::gl;
-
+mod gl;
 mod widgets;
 
 pub struct LmmpWindow {
