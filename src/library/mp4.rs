@@ -1,15 +1,10 @@
-use super::{Parser, Track};
-use anyhow::Result;
+use super::Track;
 use mp4ameta::Tag;
 use std::path::Path;
 
-pub struct Mp4Parser;
-
-impl Parser for Mp4Parser {
-    fn parse(path: impl AsRef<Path>) -> Result<Option<Track>> {
-        let tag = mp4ameta::Tag::read_from_path(&path)?;
-        Ok(parse_tags(tag, path.as_ref()))
-    }
+pub fn parse(path: impl AsRef<Path>) -> anyhow::Result<Option<Track>> {
+    let tag = mp4ameta::Tag::read_from_path(&path)?;
+    Ok(parse_tags(tag, path.as_ref()))
 }
 
 fn parse_tags(t: Tag, p: &Path) -> Option<Track> {

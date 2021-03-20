@@ -1,22 +1,17 @@
-use super::{Parser, Track};
-use anyhow::Result;
+use super::Track;
 use ffmpeg_next as ffmpeg;
 use std::path::Path;
 
-pub struct AVFParser;
-
-impl Parser for AVFParser {
-    fn parse(path: impl AsRef<Path>) -> Result<Option<Track>> {
-        let avf = match ffmpeg::format::input(&path) {
-            Ok(f) => f,
-            Err(e) => match e {
-                ffmpeg::Error::InvalidData => return Ok(None),
-                u => return Err(u.into()),
-            },
-        };
-        let met = avf.metadata();
-        Ok(parse_tags(&met, path.as_ref()))
-    }
+pub fn parse(path: impl AsRef<Path>) -> anyhow::Result<Option<Track>> {
+    let avf = match ffmpeg::format::input(&path) {
+        Ok(f) => f,
+        Err(e) => match e {
+            ffmpeg::Error::InvalidData => return Ok(None),
+            u => return Err(u.into()),
+        },
+    };
+    let met = avf.metadata();
+    Ok(parse_tags(&met, path.as_ref()))
 }
 
 fn parse_tags(m: &ffmpeg::DictionaryRef, p: &Path) -> Option<Track> {
