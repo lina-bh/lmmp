@@ -11,7 +11,19 @@ pub fn parse(path: impl AsRef<Path>) -> anyhow::Result<Option<Track>> {
         },
     };
     let met = avf.metadata();
-    Ok(parse_tags(&met, path.as_ref()))
+    let tags = parse_tags(&met, path.as_ref());
+    if tags.is_some() {
+        Ok(tags)
+    } else {
+        for stream in avf.streams() {
+            let met = stream.metadata();
+            let tags = parse_tags(&met, path.as_ref());
+            if tags.is_some() {
+                return Ok(tags);
+            }
+        }
+        Ok(None)
+    }
 }
 
 fn parse_tags(m: &ffmpeg::DictionaryRef, p: &Path) -> Option<Track> {
@@ -29,7 +41,7 @@ fn parse_tags(m: &ffmpeg::DictionaryRef, p: &Path) -> Option<Track> {
     Some(Track {
         path: p.to_owned(),
         title,
-        album,
+        album: album,
         album_artist: artist,
         track_no: track,
     })
