@@ -1,9 +1,8 @@
 use super::Track;
-use anyhow::Result;
 use id3::Tag;
 use std::path::Path;
 
-pub fn parse(path: impl AsRef<Path>) -> Result<Option<Track>> {
+pub fn parse(path: impl AsRef<Path>) -> anyhow::Result<Option<Track>> {
     let path = path.as_ref();
     let tags = Tag::read_from_path(path)?;
     Ok(parse_tags(tags, path))

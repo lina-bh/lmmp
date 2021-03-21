@@ -19,13 +19,12 @@ imgui-winit-support = { version = "^0.7", optional = true }
 imgui-opengl-renderer = { version = "^0.11", optional = true }
 glutin = { version = "^0.26", optional = true }
 winit = { version = "^0.24", optional = true }
+
 walkdir = "^2.3"
 id3 = "^0.6"
 mp4ameta = "0.9.1"
-# opus_headers = "^0.1"
-# vorbisfile-sys = "*"
-# vorbis-sys = "*"
 ffmpeg-next = "^4.3"
 anyhow = "^1"
-# libc = "*"
-# metaflac = "^0.2"
+indexmap = "^1"
+defaultmap = "^0.5"
+lexical-sort = "^0.3"
