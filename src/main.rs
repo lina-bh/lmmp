@@ -13,30 +13,20 @@ fn set_ffmpeg_loglevel() {
 }
 
 fn get_library_path() -> PathBuf {
-    let hardcoded = "~/Music".replace("~", &env::var("HOME").unwrap());
+    let mut args = env::args();
+    let p = match args.nth(1) {
+        Some(p) => p,
+        // "~/Music".replace("~", &env::var("HOME").unwrap()),
+        None => format!("{}/Music", env::var("HOME").expect("$HOME")),
+    };
 
-    PathBuf::from(hardcoded)
+    PathBuf::from(p)
 }
 
 fn main() {
     set_ffmpeg_loglevel();
 
-    use lexical_sort::{lexical_cmp, StringSort};
-
     let lib = library::Library::index(&get_library_path()).unwrap();
-    let mut artists = lib.artists().collect::<Vec<&str>>();
-    artists.string_sort_unstable(lexical_cmp);
-    for artist in artists {
-        println!("{}", artist);
-        if let Some(albums) = lib.albums(artist) {
-            for album in albums {
-                println!("- {}", album);
-                for track in lib.album(artist, album) {
-                    println!("  {:2}. {} ({:?})", track.track_no, track.title, track.path);
-                }
-            }
-        }
-    }
 
     #[cfg(feature = "ui")]
     {

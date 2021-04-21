@@ -1,11 +1,8 @@
 [package]
 name = "lmmp"
 version = "0.1.0"
-authors = ["Lina <4982999-flatulation@users.noreply.gitlab.com>"]
 edition = "2018"
 build = "build.rs"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
 [features]
 ui = ["imgui", "imgui-winit-support", "imgui-opengl-renderer", "glutin", "winit"]
@@ -25,6 +22,3 @@ id3 = "^0.6"
 mp4ameta = "0.9.1"
 ffmpeg-next = "^4.3"
 anyhow = "^1"
-indexmap = "^1"
-defaultmap = "^0.5"
-lexical-sort = "^0.3"
