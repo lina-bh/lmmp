@@ -1,4 +1,5 @@
 mod library;
+mod track;
 #[cfg(feature = "ui")]
 mod window;
 
@@ -27,6 +28,8 @@ fn main() {
     set_ffmpeg_loglevel();
 
     let lib = library::Library::index(&get_library_path()).unwrap();
+    let mut f = std::fs::File::create("./output").unwrap();
+    ron::ser::to_writer_pretty(f, &lib, std::default::Default::default()).unwrap();
 
     #[cfg(feature = "ui")]
     {
